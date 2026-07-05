@@ -1,5 +1,16 @@
 const express = require("express");  // this has installed the express libraries 
 
+const multer = require("multer");   // import multer
+
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+}); // storage stores the uploaded file 
+
+const upload = multer({ storage }); // upload receives the file 
+
 const app = express(); // this creates our express application 
 
 app.use(express.json());
@@ -10,14 +21,16 @@ app.get("/", (req, res) => {
     res.send("Backend is working!");
 });
 
-app.post("/analyze-resume", (req, res) =>
-{
+app.post("/analyze-resume", upload.single("resume"), (req, res) => {
+
+    console.log(req.file);
+
     res.json({
         message: "Resume received Successfully"
     });
 });
 
-app.listen(PORT, () => {      
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
