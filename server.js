@@ -1,3 +1,7 @@
+const fs = require("fs"); // read files from the computer
+
+const pdfParse = require("pdf-parse"); // extracts text content from pdf file
+
 const express = require("express");  // this has installed the express libraries 
 
 const multer = require("multer");   // import multer
@@ -21,9 +25,12 @@ app.get("/", (req, res) => {
     res.send("Backend is working!");
 });
 
-app.post("/analyze-resume", upload.single("resume"), (req, res) => {
+app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
 
     console.log(req.file);
+    const dataBuffer = fs.readFileSync(req.file.path);
+    const data = await pdfParse(dataBuffer);
+    console.log(data);
 
     res.json({
         message: "Resume received Successfully"
