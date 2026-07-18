@@ -6,6 +6,8 @@ const pdfParse = require("pdf-parse"); // extracts text content from pdf file
 
 const express = require("express");  // this has installed the express libraries 
 
+const cors = require("cors");
+
 const multer = require("multer");   // import multer
 
 const { GoogleGenAI } = require("@google/genai"); // imports genAI which lets backend talk to gemini 
@@ -20,6 +22,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); // upload receives the file 
 
 const app = express(); // this creates our express application 
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -42,13 +46,30 @@ app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
     const prompt = `
 You are an experienced ATS resume reviewer.
 
-Analyze the following resume and provide:
+Analyze the following resume.
 
-1. A short professional summary of the candidate.
-2. The strengths of the resume.
-3. Weaknesses or areas for improvement.
-4. An ATS score out of 100.
-5. Suggestions to improve the resume.
+Return ONLY a valid JSON object.
+
+Do NOT include markdown.
+Do NOT use \`\`\`json.
+Do NOT write explanations before or after the JSON.
+
+The JSON format must be:
+
+{
+  "atsScore": number,
+  "summary": "string",
+  "skills": ["skill1", "skill2"],
+  "missingSkills": ["skill1", "skill2"],
+  "strengths": [
+    "strength1",
+    "strength2"
+  ],
+  "improvements": [
+    "improvement1",
+    "improvement2"
+  ]
+}
 
 Resume:
 
@@ -60,13 +81,11 @@ ${data.text}
         contents: prompt,
     });
 
-    console.log(response.text);
+    const analysis = JSON.parse(response.text);
 
-    console.log(data);
-
-    res.json({
-        message: "Resume received Successfully"
-    });
+    console.log(analysis);
+    
+    res.json(analysis);
 });
 
 app.listen(PORT, () => {
