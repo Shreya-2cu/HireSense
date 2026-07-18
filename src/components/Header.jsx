@@ -3,7 +3,7 @@ import React from "react";
 const Header = () => {
   return (
     <div>
-      <h1>AI Resume Analyzer</h1>
+      <h1>HireSense</h1>
 
       <p>
         Upload your resume and receive AI-powered feedback, ATS score, and
