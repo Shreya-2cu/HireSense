@@ -148,13 +148,13 @@ http://localhost:5173
 
 ---
 
-### AI Analysis
+### Resume Upload & AI Analysis
 
 ![Loading](Screenshots/loading.png)
 
 ---
 
-### Results Dashboard
+### AI Analysis Results Dashboard
 
 ![Results](Screenshots/results.png)
 
@@ -179,3 +179,4 @@ http://localhost:5173
 - ## 📄 License
 
 This project is licensed under the MIT License.
+Feel free to fork this project, explore the code, and suggest improvements.
