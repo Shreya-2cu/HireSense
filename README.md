@@ -18,6 +18,20 @@ HireSense simplifies this process by allowing users to upload their resume in PD
 
 Designed with a modern full-stack architecture, HireSense demonstrates the integration of AI, backend APIs, PDF processing, and responsive frontend development into a single production-ready application.
 
+The application is deployed and publicly accessible, showcasing a complete full-stack AI workflow from resume upload to intelligent analysis.
+
+## ✨ Features
+
+- 📄 Upload resumes in PDF format
+- 🤖 AI-powered resume analysis using Google Gemini
+- 📊 ATS compatibility score generation
+- 📝 Resume summary generation
+- 💪 Identification of strengths and key skills
+- ❌ Detection of missing skills
+- 💡 Personalized improvement suggestions
+- ⚡ Responsive and modern user interface
+- 🔒 Input validation and error handling
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -80,7 +94,7 @@ PORT=5000
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/HireSense.git
+git clone https://github.com/Shreya-2cu/HireSense.git
 cd HireSense
 ```
 
