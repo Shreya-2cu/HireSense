@@ -4,6 +4,12 @@ An AI-powered Resume Analyzer that evaluates resumes, generates ATS compatibilit
 
 ---
 
+## 🌐 Live Demo
+
+**🚀 Try HireSense:** https://hire-sense-kappa.vercel.app
+
+> **Note:** The backend is hosted on Render's free tier. The first request after inactivity may take up to 60 seconds while the server wakes up.
+
 ## 📖 Overview
 
 Hiring processes today rely heavily on Applicant Tracking Systems (ATS), making it difficult for candidates to understand how well their resumes align with industry expectations.
