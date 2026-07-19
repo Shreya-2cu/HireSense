@@ -12,11 +12,13 @@ const multer = require("multer");   // import multer
 
 const { GoogleGenAI } = require("@google/genai"); // imports genAI which lets backend talk to gemini 
 
+const path = require("path");
+
 const storage = multer.diskStorage({
-    destination: "uploads/",
+    destination: path.join(__dirname, "uploads"),
     filename: (req, file, cb) => {
         cb(null, file.originalname);
-    }
+    },
 }); // storage stores the uploaded file 
 
 const upload = multer({ storage }); // upload receives the file 
@@ -27,7 +29,7 @@ app.use(cors());
 
 app.use(express.json());
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
@@ -38,12 +40,13 @@ app.get("/", (req, res) => {
 });
 
 app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+    try {
+        console.log(req.file);
 
-    console.log(req.file);
-    const dataBuffer = fs.readFileSync(req.file.path);
-    const data = await pdfParse(dataBuffer);
+        const dataBuffer = fs.readFileSync(req.file.path);
+        const data = await pdfParse(dataBuffer);
 
-    const prompt = `
+        const prompt = `
 You are an experienced ATS resume reviewer.
 
 Analyze the following resume.
@@ -76,16 +79,29 @@ Resume:
 ${data.text}
 `;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-    });
+        const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: prompt,
+        });
 
-    const analysis = JSON.parse(response.text);
+        const analysis = JSON.parse(response.text);
 
-    console.log(analysis);
-    
-    res.json(analysis);
+        console.log(analysis);
+
+        res.json(analysis);
+
+    } catch (error) {
+        console.error("Error analyzing resume:", error);
+
+        res.status(500).json({
+            error: "Something went wrong while analyzing the resume."
+        });
+
+    } finally {
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+    }
 });
 
 app.listen(PORT, () => {

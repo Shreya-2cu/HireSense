@@ -1,7 +1,10 @@
 {
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "@google/genai": "^2.11.0",
-    "cors": "^2.8.6",
+    "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "multer": "^2.2.0",

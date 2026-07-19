@@ -42,7 +42,7 @@ const UploadSection = ({
             formData.append("resume", resume);
 
             const response = await fetch(
-                "http://localhost:5000/analyze-resume",
+                `${import.meta.env.VITE_API_URL}/analyze-resume`,
                 {
                     method: "POST",
                     body: formData,
