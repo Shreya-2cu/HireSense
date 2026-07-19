@@ -1,5 +1,7 @@
 # HireSense
 
+🚀 Live • AI Powered • Full Stack
+
 An AI-powered Resume Analyzer that evaluates resumes, generates ATS compatibility scores, identifies missing skills, and provides personalized improvement suggestions using Google Gemini AI.
 
 ---
@@ -32,6 +34,14 @@ The application is deployed and publicly accessible, showcasing a complete full-
 - ⚡ Responsive and modern user interface
 - 🔒 Input validation and error handling
 
+## 🚀 Deployment
+
+| Service | Platform |
+|---------|----------|
+| Frontend | Vercel |
+| Backend | Render |
+| AI Model | Google Gemini 2.5 Flash |
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -42,6 +52,22 @@ The application is deployed and publicly accessible, showcasing a complete full-
 | File Processing | Multer, pdf-parse |
 | Language | JavaScript |
 | Version Control | Git & GitHub |
+
+## 🏗️ Architecture
+
+Resume (PDF)
+      │
+      ▼
+React Frontend (Vercel)
+      │
+      ▼
+Express Backend (Render)
+      │
+      ▼
+Google Gemini AI
+      │
+      ▼
+Resume Analysis
 
 ## 📂 Project Structure
 
