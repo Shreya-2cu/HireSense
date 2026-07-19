@@ -62,9 +62,13 @@ const UploadSection = ({
             console.error(error);
 
             if (error.name === "TypeError") {
-                setMessage("Unable to connect to the server. Please make sure the backend is running.");
+                setMessage(
+                    "The AI server is waking up. Please wait about a minute and try again."
+                );
             } else {
-                setMessage(error.message || "Something went wrong. Please try again.");
+                setMessage(
+                    "We couldn't analyze your resume this time. Please try again in a few seconds."
+                );
             }
         }
 
@@ -118,7 +122,7 @@ const UploadSection = ({
                 {loading ? (
                     <>
                         <span className="spinner"></span>
-                        Analyzing Resume...
+                        AI is analyzing your resume...
                     </>
                 ) : (
                     <>
@@ -127,6 +131,13 @@ const UploadSection = ({
                     </>
                 )}
             </button>
+
+            {loading && (
+                <div className="message info">
+                    🚀 If this is your first request, the AI server may take up to 60
+                    seconds to wake up.
+                </div>
+            )}
 
             {message && (
                 <div className="message">
