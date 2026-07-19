@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Upload, ArrowRight } from "lucide-react";
 
 const UploadSection = ({
     setShowResult,
@@ -70,47 +71,71 @@ const UploadSection = ({
         finally {
             setLoading(false);
         }
-    
-    
-};
 
-return (
-    <div className="upload-section">
-        <label htmlFor="resume-upload" className="upload-box">
-            <h3>📄 Upload Resume</h3>
-            <p>Only PDF files are allowed</p>
-        </label>
 
-        <input
-            id="resume-upload"
-            type="file"
-            accept=".pdf"
-            onChange={handleFileChange}
-            hidden
-        />
+    };
 
-        {resume && <p>Selected File: {resume.name}</p>}
+    return (
+        <div className="upload-section">
 
-        <br />
-        <br />
+            <label htmlFor="resume-upload" className="upload-box">
 
-        <button
-            onClick={handleAnalyze}
-            disabled={!resume || loading}
-        >
-            {loading ? (
-                <>
-                    <span className="spinner"></span>
-                    Analyzing...
-                </>
-            ) : (
-                "Analyze Resume"
+                <div className="upload-icon">
+                    <Upload size={52} strokeWidth={2} />
+                </div>
+
+                <h3>Upload Your Resume</h3>
+
+                <p>
+                    Drag & drop your PDF here or click to browse
+                </p>
+
+                <span className="browse-btn">
+                    Choose PDF
+                </span>
+
+            </label>
+
+            <input
+                id="resume-upload"
+                type="file"
+                accept=".pdf"
+                onChange={handleFileChange}
+                hidden
+            />
+
+            {resume && (
+                <div className="selected-file">
+                    ✅ {resume.name}
+                </div>
             )}
-        </button>
 
-        {message && <p>{message}</p>}
-    </div>
-);
-};
+            <button
+                onClick={handleAnalyze}
+                disabled={!resume || loading}
+                className="analyze-btn"
+            >
+                {loading ? (
+                    <>
+                        <span className="spinner"></span>
+                        Analyzing Resume...
+                    </>
+                ) : (
+                    <>
+                        Analyze Resume
+                        <ArrowRight size={18} />
+                    </>
+                )}
+            </button>
+
+            {message && (
+                <div className="message">
+                    {message}
+                </div>
+            )}
+
+        </div>
+    );
+}
 
 export default UploadSection;

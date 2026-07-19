@@ -15,24 +15,23 @@ const App = () => {
   const [loading, setLoading] = useState(false);
 
   return (
-    <>
+
       <div className="app-container">
 
         <Header />
+        <div className='main-card'>
+          <UploadSection
+            setShowResult={setShowResult}
+            loading={loading}
+            setLoading={setLoading}
+            setResult={setResult}
+          />
 
-        <UploadSection
-          setShowResult={setShowResult}
-          loading={loading}
-          setLoading={setLoading}
-          setResult={setResult}
-        />
+          {loading && <LoadingAI />}
 
-        {loading && <LoadingAI />}
-
-        {showResult && <ResultSection result={result} />}
-
+          {showResult && <ResultSection result={result} />}
+        </div>
       </div>
-    </>
   )
 }
 

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Brain, Sparkles, CheckCircle2 } from "lucide-react";
 
 const LoadingAI = () => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -28,23 +29,51 @@ const LoadingAI = () => {
 
     return (
         <div className="loading-card">
-            <h2>🤖 HireSense AI</h2>
 
-            <p>Analyzing your resume...</p>
-            <h3>{steps[currentStep]}</h3>
-            <br />
-            {steps.map((step, index) => (
-                <p key={index}>
-                    {index < currentStep
-                        ? "✅"
-                        : index === currentStep
-                        ? "⏳"
-                        : "⬜"}{" "}
-                    {step}
-                </p>
-            ))}
+            <div className="loading-icon">
+                <Brain size={42} />
+            </div>
 
-            <p>Please don't close this page.</p>
+            <h2>HireSense AI</h2>
+
+            <p className="loading-subtitle">
+                Analyzing your resume with AI...
+            </p>
+
+            <div className="loading-progress">
+
+                {steps.map((step, index) => (
+
+                    <div
+                        key={index}
+                        className={`loading-step ${index < currentStep
+                                ? "completed-step"
+                                : index === currentStep
+                                    ? "current-step"
+                                    : ""
+                            }`}
+                    >
+
+                        <CheckCircle2 size={18} />
+
+                        <span>{step}</span>
+
+                    </div>
+
+                ))}
+
+            </div>
+
+            <div className="loading-footer">
+
+                <Sparkles size={16} />
+
+                <span>
+                    This usually takes only a few seconds.
+                </span>
+
+            </div>
+
         </div>
     );
 };
