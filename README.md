@@ -128,8 +128,6 @@ http://localhost:5173
 
 ## 📸 Screenshots
 
-## 📸 Screenshots
-
 ### Landing Page
 
 ![Landing](Screenshots/landing.png)
