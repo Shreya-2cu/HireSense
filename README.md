@@ -1,6 +1,6 @@
 # HireSense
 
-🚀 Live • AI Powered • Full Stack
+Live • AI Powered • Full Stack
 
 An AI-powered Resume Analyzer that evaluates resumes, generates ATS compatibility scores, identifies missing skills, and provides personalized improvement suggestions using Google Gemini AI.
 
@@ -8,11 +8,11 @@ An AI-powered Resume Analyzer that evaluates resumes, generates ATS compatibilit
 
 ## 🌐 Live Demo
 
-**🚀 Try HireSense:** https://hire-sense-kappa.vercel.app
+** Try HireSense:** https://hire-sense-kappa.vercel.app
 
 > **Note:** The backend is hosted on Render's free tier. The first request after inactivity may take up to 60 seconds while the server wakes up.
 
-## 📖 Overview
+##  Overview
 
 Hiring processes today rely heavily on Applicant Tracking Systems (ATS), making it difficult for candidates to understand how well their resumes align with industry expectations.
 
@@ -24,17 +24,17 @@ The application is deployed and publicly accessible, showcasing a complete full-
 
 ## ✨ Features
 
-- 📄 Upload resumes in PDF format
-- 🤖 AI-powered resume analysis using Google Gemini
-- 📊 ATS compatibility score generation
-- 📝 Resume summary generation
-- 💪 Identification of strengths and key skills
-- ❌ Detection of missing skills
-- 💡 Personalized improvement suggestions
-- ⚡ Responsive and modern user interface
-- 🔒 Input validation and error handling
+-  Upload resumes in PDF format
+-  AI-powered resume analysis using Google Gemini
+-  ATS compatibility score generation
+-  Resume summary generation
+-  Identification of strengths and key skills
+-  Detection of missing skills
+-  Personalized improvement suggestions
+-  Responsive and modern user interface
+-  Input validation and error handling
 
-## 🚀 Deployment
+##  Deployment
 
 | Service | Platform |
 |---------|----------|
@@ -53,7 +53,7 @@ The application is deployed and publicly accessible, showcasing a complete full-
 | Language | JavaScript |
 | Version Control | Git & GitHub |
 
-## 🏗️ Architecture
+##  Architecture
 
 Resume (PDF)
       │
@@ -69,7 +69,7 @@ Google Gemini AI
       ▼
 Resume Analysis
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 HireSense/
@@ -98,7 +98,7 @@ HireSense/
 └── README.md
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -185,7 +185,7 @@ http://localhost:5173
 ![Results](Screenshots/results.png)
 
 
-## 🚀 Future Enhancements
+##  Future Enhancements
 
 - Job Description (JD) matching
 - User authentication and profile management
@@ -195,7 +195,7 @@ http://localhost:5173
 - Multi-language resume support
 - AI-powered interview preparation
 
-- ## 👩‍💻 Author
+- ##  Author
 
 **Shreya Dwivedi**
 
