@@ -1,111 +1,47 @@
 require("dotenv").config();
 
-const fs = require("fs"); // read files from the computer
-
-const pdfParse = require("pdf-parse"); // extracts text content from pdf file
-
-const express = require("express");  // this has installed the express libraries 
-
+const express = require("express");
 const cors = require("cors");
 
-const multer = require("multer");   // import multer
+const connectDB = require("./config/db");
 
-const { GoogleGenAI } = require("@google/genai"); // imports genAI which lets backend talk to gemini 
+const authRoutes = require("./routes/authRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
 
-const path = require("path");
+const protect = require("./middleware/authMiddleware");
 
-const storage = multer.diskStorage({
-    destination: path.join(__dirname, "uploads"),
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    },
-}); // storage stores the uploaded file 
-
-const upload = multer({ storage }); // upload receives the file 
-
-const app = express(); // this creates our express application 
+const app = express();
 
 app.use(cors());
-
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/resume", resumeRoutes);
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
+// Test Protected Route
+app.get("/api/test", protect, (req, res) => {
+    res.json(req.user);
 });
 
+// Health Check
 app.get("/", (req, res) => {
     res.send("Backend is working!");
 });
 
-app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+const PORT = process.env.PORT || 5000;
+
+const startServer = async () => {
     try {
-        console.log(req.file);
+        await connectDB();
 
-        const dataBuffer = fs.readFileSync(req.file.path);
-        const data = await pdfParse(dataBuffer);
-
-        const prompt = `
-You are an experienced ATS resume reviewer.
-
-Analyze the following resume.
-
-Return ONLY a valid JSON object.
-
-Do NOT include markdown.
-Do NOT use \`\`\`json.
-Do NOT write explanations before or after the JSON.
-
-The JSON format must be:
-
-{
-  "atsScore": number,
-  "summary": "string",
-  "skills": ["skill1", "skill2"],
-  "missingSkills": ["skill1", "skill2"],
-  "strengths": [
-    "strength1",
-    "strength2"
-  ],
-  "improvements": [
-    "improvement1",
-    "improvement2"
-  ]
-}
-
-Resume:
-
-${data.text}
-`;
-
-        const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            contents: prompt,
+        app.listen(PORT, () => {
+            console.log(`🚀 Server is running on port ${PORT}`);
         });
-
-        const analysis = JSON.parse(response.text);
-
-        console.log(analysis);
-
-        res.json(analysis);
 
     } catch (error) {
-        console.error("Error analyzing resume:", error);
-
-        res.status(500).json({
-            error: "Something went wrong while analyzing the resume."
-        });
-
-    } finally {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
+        console.error("Failed to start server:", error.message);
     }
-});
+};
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-// .listen This tells Express: Start the server and keep listening for incoming requests from browser.
+startServer();
