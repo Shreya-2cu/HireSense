@@ -5,6 +5,8 @@ const protect = require("../middleware/authMiddleware");
 const {
     analyzeResume,
     getResumeHistory,
+    getResumeById,
+    deleteResume,
 } = require("../controllers/resumeController");
 
 const multer = require("multer");
@@ -30,4 +32,15 @@ router.get(
     protect,
     getResumeHistory
 );
+router.get(
+    "/:id",
+    protect,
+    getResumeById
+);
+router.delete(
+    "/:id",
+    protect,
+    deleteResume
+);
+
 module.exports = router;
