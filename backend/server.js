@@ -32,6 +32,21 @@ app.get("/", (req, res) => {
     res.send("Backend is working!");
 });
 
+// Global Error Handler
+app.use((error, req, res, next) => {
+    console.error("Server Error:", error);
+
+    if (error.message === "Only PDF files are allowed.") {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+
+    res.status(500).json({
+        message: "Something went wrong.",
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
