@@ -1,38 +1,64 @@
-import React, { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import ResumeHistory from "./pages/ResumeHistory";
+import ResumeDetails from "./pages/ResumeDetails";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
-import Header from './components/Header'
-import UploadSection from './components/UploadSection'
-import ResultSection from './components/ResultSection'
-import LoadingAI from "./components/LoadingAI";
 
+function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
 
-const App = () => {
+                <Route
+                    path="/"
+                    element={<Landing />}
+                />
 
-  const [result, setResult] = useState(null);
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
 
-  const [showResult, setShowResult] = useState(false);
+                <Route
+                    path="/signup"
+                    element={<Signup />}
+                />
 
-  const [loading, setLoading] = useState(false);
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
 
-  return (
+                <Route
+                    path="/history"
+                    element={
+                        <ProtectedRoute>
+                            <ResumeHistory />
+                        </ProtectedRoute>
+                    }
+                />
 
-      <div className="app-container">
+                <Route
+                    path="/resume/:id"
+                    element={
+                        <ProtectedRoute>
+                            <ResumeDetails />
+                        </ProtectedRoute>
+                    }
+                />
 
-        <Header />
-        <div className='main-card'>
-          <UploadSection
-            setShowResult={setShowResult}
-            loading={loading}
-            setLoading={setLoading}
-            setResult={setResult}
-          />
-
-          {loading && <LoadingAI />}
-
-          {showResult && <ResultSection result={result} />}
-        </div>
-      </div>
-  )
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;

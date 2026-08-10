@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Upload, ArrowRight } from "lucide-react";
+import API from "../services/api";
 
 const UploadSection = ({
     setShowResult,
@@ -7,6 +8,7 @@ const UploadSection = ({
     setLoading,
     setResult,
 }) => {
+
     const [resume, setResume] = useState(null);
     const [message, setMessage] = useState("");
 
@@ -38,25 +40,31 @@ const UploadSection = ({
         setMessage("");
 
         try {
-            const formData = new FormData();
-            formData.append("resume", resume);
+           const formData = new FormData();
+    formData.append("resume", resume);
 
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/analyze-resume`,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
+    const token = localStorage.getItem("token");
 
-            if (!response.ok) {
-                throw new Error("Failed to analyze resume.");
-            }
+    console.log("JWT Token:", token);
 
-            const data = await response.json();
+    const response = await API.post(
+        "/resume/analyze",
+        formData,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
 
-            setResult(data);
-            setShowResult(true);
+    const data = response.data;
+
+    console.log("Analyze Response:", data);
+
+    setResult(data);
+    setShowResult(true);
+
         }
         catch (error) {
             console.error(error);

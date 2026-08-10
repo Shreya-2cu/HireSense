@@ -1,0 +1,34 @@
+import { useState } from "react";
+import Header from "../components/Header";
+import UploadSection from "../components/UploadSection";
+import ResultSection from "../components/ResultSection";
+import LoadingAI from "../components/LoadingAI";
+
+function Landing() {
+    const [result, setResult] = useState(null);
+    const [showResult, setShowResult] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    return (
+        <div className="app-container">
+            <Header />
+
+            <div className="main-card">
+                <UploadSection
+                    setShowResult={setShowResult}
+                    loading={loading}
+                    setLoading={setLoading}
+                    setResult={setResult}
+                />
+
+                {loading && <LoadingAI />}
+
+                {showResult && (
+                    <ResultSection result={result} />
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default Landing;
