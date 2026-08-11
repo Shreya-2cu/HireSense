@@ -11,7 +11,40 @@ const analyzeResume = async (req, res) => {
     try {
 
         const dataBuffer = fs.readFileSync(req.file.path);
+
+        const pdfSignature = dataBuffer.toString("utf8", 0, 5);
+
+        if (pdfSignature !== "%PDF-") {
+            return res.status(400).json({
+                message: "Invalid PDF file.",
+            });
+        }
+
         const data = await pdfParse(dataBuffer);
+
+        const resumeText = data.text.toLowerCase();
+
+        const resumeKeywords = [
+            "education",
+            "experience",
+            "skills",
+            "projects",
+            "work",
+            "internship",
+            "certifications",
+            "summary",
+            "objective",
+        ];
+
+        const matchedKeywords = resumeKeywords.filter((keyword) =>
+            resumeText.includes(keyword)
+        );
+
+        if (matchedKeywords.length < 2) {
+            return res.status(400).json({
+                message: "This document does not appear to be a resume. Please upload a professional resume.",
+            });
+        }
 
         const prompt = `
 You are an experienced ATS resume reviewer.
