@@ -2,6 +2,7 @@ const fs = require("fs");
 const pdfParse = require("pdf-parse");
 const { GoogleGenAI } = require("@google/genai");
 const Resume = require("../models/Resume");
+const mongoose = require("mongoose");
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
@@ -200,6 +201,13 @@ const getResumeHistory = async (req, res) => {
 
 const getResumeById = async (req, res) => {
     try {
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid resume ID.",
+            });
+        }
+
         const resume = await Resume.findOne({
             _id: req.params.id,
             user: req.user.id,
