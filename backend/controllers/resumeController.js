@@ -7,6 +7,17 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
+
+const isValidAnalysis = (analysis) => {
+    return (
+        typeof analysis.atsScore === "number" &&
+        typeof analysis.summary === "string" &&
+        Array.isArray(analysis.skills) &&
+        Array.isArray(analysis.missingSkills) &&
+        Array.isArray(analysis.strengths) &&
+        Array.isArray(analysis.improvements)
+    );
+};
 const analyzeResume = async (req, res) => {
     try {
 
@@ -84,8 +95,21 @@ ${data.text}
             contents: prompt,
         });
 
-        const analysis = JSON.parse(response.text);
+        let analysis;
 
+        try {
+            analysis = JSON.parse(response.text);
+        } catch (error) {
+            return res.status(502).json({
+                message: "The AI returned an invalid response. Please try again.",
+            });
+        }
+
+        if (!isValidAnalysis(analysis)) {
+            return res.status(502).json({
+                message: "The AI returned an unexpected response. Please try again.",
+            });
+        }
         const resume = new Resume({
             user: req.user.id,
 
