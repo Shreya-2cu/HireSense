@@ -1,11 +1,15 @@
 require("dotenv").config();
 
 const express = require("express");
+
 const cors = require("cors");
+
+const multer = require("multer");
 
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
+
 const resumeRoutes = require("./routes/resumeRoutes");
 
 const protect = require("./middleware/authMiddleware");
@@ -35,6 +39,24 @@ app.get("/", (req, res) => {
 // Global Error Handler
 app.use((error, req, res, next) => {
     console.error("Server Error:", error);
+
+    if (error instanceof multer.MulterError) {
+        if (error.code === "LIMIT_FILE_SIZE") {
+            return res.status(400).json({
+                message: "Resume file must be smaller than 5 MB.",
+            });
+        }
+
+        if (error.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.status(400).json({
+                message: "Please upload the resume using the correct file field.",
+            });
+        }
+
+        return res.status(400).json({
+            message: "Invalid file upload.",
+        });
+    }
 
     if (error.message === "Only PDF files are allowed.") {
         return res.status(400).json({
