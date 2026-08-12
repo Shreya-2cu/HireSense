@@ -165,12 +165,28 @@ ${data.text}
 
 const getResumeHistory = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+
+        const skip = (page - 1) * limit;
+
         const resumes = await Resume.find({
+            user: req.user.id,
+        })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalResumes = await Resume.countDocuments({
             user: req.user.id,
         });
 
         res.status(200).json({
             resumes,
+            page,
+            limit,
+            totalResumes,
+            totalPages: Math.ceil(totalResumes / limit),
         });
 
     } catch (error) {
