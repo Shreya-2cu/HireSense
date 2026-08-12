@@ -235,6 +235,12 @@ const getResumeById = async (req, res) => {
 const deleteResume = async (req, res) => {
     try {
 
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid resume ID.",
+            });
+        }
+
         const resume = await Resume.findOneAndDelete({
             _id: req.params.id,
             user: req.user.id,
