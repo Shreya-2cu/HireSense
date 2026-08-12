@@ -17,6 +17,8 @@ const resumeSchema = new mongoose.Schema(
         atsScore: {
             type: Number,
             required: true,
+            min: 0,
+            max: 100,
         },
 
         summary: {

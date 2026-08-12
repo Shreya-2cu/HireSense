@@ -21,6 +21,12 @@ const isValidAnalysis = (analysis) => {
 const analyzeResume = async (req, res) => {
     try {
 
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Please upload a resume PDF.",
+            });
+        }
+
         const dataBuffer = fs.readFileSync(req.file.path);
 
         const pdfSignature = dataBuffer.toString("utf8", 0, 5);
@@ -133,24 +139,24 @@ ${data.text}
         res.json(analysis);
 
     } catch (error) {
-    console.error("Error analyzing resume:", error);
+        console.error("Error analyzing resume:", error);
 
-    if (error.status === 503) {
-        return res.status(503).json({
-            message: "The AI service is temporarily unavailable. Please try again shortly.",
+        if (error.status === 503) {
+            return res.status(503).json({
+                message: "The AI service is temporarily unavailable. Please try again shortly.",
+            });
+        }
+
+        if (error.status === 429) {
+            return res.status(429).json({
+                message: "Too many AI requests. Please try again later.",
+            });
+        }
+
+        return res.status(500).json({
+            message: "Something went wrong while analyzing the resume.",
         });
-    }
-
-    if (error.status === 429) {
-        return res.status(429).json({
-            message: "Too many AI requests. Please try again later.",
-        });
-    }
-
-    return res.status(500).json({
-        message: "Something went wrong while analyzing the resume.",
-    });
-} finally {
+    } finally {
         if (req.file && fs.existsSync(req.file.path)) {
             fs.unlinkSync(req.file.path);
         }
