@@ -47,27 +47,30 @@ const signup = async (req, res) => {
         });
 
     } catch (error) {
-    console.error(error);
+        console.error(error);
 
-    res.status(500).json({
-        message: "Internal Server Error",
-    });
-}
+        res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
 }
 
 
 const login = async (req, res) => {
     try {
 
-        const { email, password } = req.body;
+        const { password } = req.body;
+        const normalizedEmail = req.body.email?.trim().toLowerCase();
 
-        if (!email || !password) {
+        if (!normalizedEmail || !password) {
             return res.status(400).json({
                 message: "Email and password are required."
             });
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({
+            email: normalizedEmail,
+        });
 
         if (!user) {
             return res.status(401).json({
