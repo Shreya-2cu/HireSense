@@ -8,7 +8,9 @@ const router = express.Router();
 
 const { signup, login } = require("../controllers/authController");
 
-router.post("/signup", signup);
-router.post("/login", login);
+const authLimiter = require("../middleware/rateLimitMiddleware");
+
+router.post("/signup", authLimiter, signup);
+router.post("/login", authLimiter, login);
 
 module.exports = router;
