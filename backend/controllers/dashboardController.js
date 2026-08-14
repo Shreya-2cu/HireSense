@@ -29,6 +29,46 @@ const getDashboard = async (req, res) => {
             createdAt: -1,
         });
 
+        const atsHistory = await Resume.find({
+            user: req.user.id,
+        })
+            .sort({
+                createdAt: 1,
+            })
+            .select("atsScore createdAt -_id");
+            
+        const atsImprovement =
+            atsHistory.length > 1
+                ? atsHistory[atsHistory.length - 1].atsScore - atsHistory[0].atsScore
+                : 0;
+
+        const skillGapResult = await Resume.aggregate([
+            {
+                $match: {
+                    user: new mongoose.Types.ObjectId(req.user.id),
+                },
+            },
+            {
+                $unwind: "$missingSkills",
+            },
+            {
+                $group: {
+                    _id: "$missingSkills",
+                    count: {
+                        $sum: 1,
+                    },
+                },
+            },
+            {
+                $sort: {
+                    count: -1,
+                },
+            },
+            {
+                $limit: 10,
+            },
+        ]);
+
         const averageResult = await Resume.aggregate([
             {
                 $match: {
@@ -46,11 +86,15 @@ const getDashboard = async (req, res) => {
         ]);
 
         const averageATS = averageResult[0]?.averageATS || 0;
+
         res.status(200).json({
             totalResumes,
             highestATS: highestResume.atsScore,
             averageATS: Number(averageATS.toFixed(2)),
             latestATS: latestResume.atsScore,
+            atsImprovement,
+            atsHistory,
+            skillGaps: skillGapResult,
         });
 
     } catch (error) {
