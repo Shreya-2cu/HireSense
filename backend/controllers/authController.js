@@ -4,15 +4,24 @@ const User = require("../models/User");
 
 const signup = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, password } = req.body;
+        const normalizedEmail = req.body.email?.trim().toLowerCase();
 
-        if (!name || !email || !password) {
+        if (!name || !normalizedEmail || !password) {
             return res.status(400).json({
                 message: "All fields are required."
             });
         }
 
-        const existingUser = await User.findOne({ email });
+        if (password.length < 8) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters long.",
+            });
+        }
+
+        const existingUser = await User.findOne({
+            email: normalizedEmail,
+        });
 
         if (existingUser) {
             return res.status(409).json({
@@ -23,8 +32,8 @@ const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
-            name,
-            email,
+            name: name.trim(),
+            email: normalizedEmail,
             password: hashedPassword,
         });
 
@@ -38,13 +47,14 @@ const signup = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
+    console.error(error);
 
-        res.status(500).json({
-            message: "Internal Server Error",
-        });
-    }
-};
+    res.status(500).json({
+        message: "Internal Server Error",
+    });
+}
+}
+
 
 const login = async (req, res) => {
     try {
