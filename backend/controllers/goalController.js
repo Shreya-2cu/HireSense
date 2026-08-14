@@ -1,0 +1,187 @@
+const Goal = require("../models/Goal");
+
+const createGoal = async (req, res) => {
+    try {
+const { title, targetRole, targetSkills } = req.body || {};
+
+        if (!title || !targetRole) {
+            return res.status(400).json({
+                message: "Title and target role are required.",
+            });
+        }
+
+        const goal = await Goal.create({
+            user: req.user.id,
+            title: title.trim(),
+            targetRole: targetRole.trim(),
+            targetSkills: targetSkills || [],
+        });
+
+        res.status(201).json({
+            message: "Goal created successfully.",
+            goal,
+        });
+
+    } catch (error) {
+        console.error("Create Goal Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+
+const getGoals = async (req, res) => {
+    try {
+        const goals = await Goal.find({
+            user: req.user.id,
+        }).sort({
+            createdAt: -1,
+        });
+
+        res.status(200).json({
+            goals,
+        });
+
+    } catch (error) {
+        console.error("Get Goals Error:", error);
+
+        res.status(500).json({
+            message: "Failed to fetch goals.",
+        });
+    }
+};
+
+const updateGoalProgress = async (req, res) => {
+    try {
+        const { progress } = req.body || {};
+
+        if (progress === undefined) {
+            return res.status(400).json({
+                message: "Progress is required.",
+            });
+        }
+
+        if (progress < 0 || progress > 100) {
+            return res.status(400).json({
+                message: "Progress must be between 0 and 100.",
+            });
+        }
+
+        const goal = await Goal.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        goal.progress = progress;
+
+        if (progress === 100) {
+            goal.status = "completed";
+        } else {
+            goal.status = "active";
+        }
+
+        await goal.save();
+
+        res.status(200).json({
+            message: "Goal progress updated successfully.",
+            goal,
+        });
+
+    } catch (error) {
+        console.error("Update Goal Progress Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+
+const updateGoal = async (req, res) => {
+    try {
+        const { title, targetRole, targetSkills } = req.body || {};
+
+        if (!title && !targetRole && !targetSkills) {
+            return res.status(400).json({
+                message: "At least one field is required.",
+            });
+        }
+
+        const goal = await Goal.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        if (title) {
+            goal.title = title.trim();
+        }
+
+        if (targetRole) {
+            goal.targetRole = targetRole.trim();
+        }
+
+        if (targetSkills) {
+            goal.targetSkills = targetSkills;
+        }
+
+        await goal.save();
+
+        res.status(200).json({
+            message: "Goal updated successfully.",
+            goal,
+        });
+
+    } catch (error) {
+        console.error("Update Goal Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+
+const deleteGoal = async (req, res) => {
+    try {
+        const goal = await Goal.findOneAndDelete({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        res.status(200).json({
+            message: "Goal deleted successfully.",
+        });
+
+    } catch (error) {
+        console.error("Delete Goal Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+
+module.exports = {
+    createGoal,
+    getGoals,
+    updateGoalProgress,
+    updateGoal,
+    deleteGoal,
+};
