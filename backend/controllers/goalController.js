@@ -1,4 +1,5 @@
 const Goal = require("../models/Goal");
+const Resume = require("../models/Resume");
 
 const createGoal = async (req, res) => {
     try {
@@ -48,6 +49,57 @@ const getGoals = async (req, res) => {
 
         res.status(500).json({
             message: "Failed to fetch goals.",
+        });
+    }
+};
+
+const getGoalSkillGaps = async (req, res) => {
+    try {
+        const goal = await Goal.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        const latestResume = await Resume.findOne({
+            user: req.user.id,
+        }).sort({
+            createdAt: -1,
+        });
+
+        if (!latestResume) {
+            return res.status(404).json({
+                message: "No resume found. Please analyze a resume first.",
+            });
+        }
+
+        const missingSkills = latestResume.missingSkills.map((skill) =>
+            skill.trim().toLowerCase()
+        );
+
+        const skillGaps = goal.targetSkills.filter((skill) =>
+            missingSkills.includes(skill.trim().toLowerCase())
+        );
+
+        res.status(200).json({
+            goal: {
+                id: goal._id,
+                title: goal.title,
+                targetRole: goal.targetRole,
+            },
+            skillGaps,
+        });
+
+    } catch (error) {
+        console.error("Get Goal Skill Gaps Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
         });
     }
 };
@@ -181,6 +233,7 @@ const deleteGoal = async (req, res) => {
 module.exports = {
     createGoal,
     getGoals,
+    getGoalSkillGaps,
     updateGoalProgress,
     updateGoal,
     deleteGoal,
