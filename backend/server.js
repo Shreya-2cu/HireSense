@@ -18,6 +18,8 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const goalRoutes = require("./routes/goalRoutes");
 
+const taskRoutes = require("./routes/taskRoutes");
+
 const app = express();
 
 app.use(cors());
@@ -28,6 +30,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/goals", goalRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // Test Protected Route
 app.get("/api/test", protect, (req, res) => {
