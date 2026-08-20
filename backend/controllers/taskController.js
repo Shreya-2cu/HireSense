@@ -90,7 +90,7 @@ const updateTaskStatus = async (req, res) => {
             "completed",
         ];
 
-        if (!status || !allowedStatuses.includes(status)) {
+        if (!allowedStatuses.includes(status)) {
             return res.status(400).json({
                 message: "Invalid task status.",
             });
@@ -111,9 +111,47 @@ const updateTaskStatus = async (req, res) => {
 
         await task.save();
 
+        // Get all tasks belonging to this goal
+        const totalTasks = await Task.countDocuments({
+            goal: task.goal,
+            user: req.user.id,
+        });
+
+        // Get completed tasks
+        const completedTasks = await Task.countDocuments({
+            goal: task.goal,
+            user: req.user.id,
+            status: "completed",
+        });
+
+        // Calculate goal progress
+        const progress =
+            totalTasks === 0
+                ? 0
+                : Math.round((completedTasks / totalTasks) * 100);
+
+        // Update the goal
+        const goal = await Goal.findOne({
+            _id: task.goal,
+            user: req.user.id,
+        });
+
+        if (goal) {
+            goal.progress = progress;
+
+            if (progress === 100) {
+                goal.status = "completed";
+            } else {
+                goal.status = "active";
+            }
+
+            await goal.save();
+        }
+
         res.status(200).json({
             message: "Task status updated successfully.",
             task,
+            goalProgress: progress,
         });
 
     } catch (error) {
