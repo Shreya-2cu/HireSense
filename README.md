@@ -120,7 +120,7 @@ PORT=5000
 Clone the repository:
 
 ```bash
-git clone https://github.com/Shreya-2cu/HireSense.git
+git clone https://github.com/dw-shreya/HireSense.git
 cd HireSense
 ```
 
@@ -199,8 +199,8 @@ http://localhost:5173
 
 **Shreya Dwivedi**
 
-- GitHub: https://github.com/Shreya-2cu
-- LinkedIn: https://www.linkedin.com/in/shreya-dwivedi-b0147b408/
+- GitHub: https://github.com/dw-shreya
+- LinkedIn: https://www.linkedin.com/in/dw-shreya/
 
 - ## 📄 License
 
