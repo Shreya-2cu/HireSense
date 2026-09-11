@@ -47,10 +47,10 @@ const LoadingAI = () => {
                     <div
                         key={index}
                         className={`loading-step ${index < currentStep
-                                ? "completed-step"
-                                : index === currentStep
-                                    ? "current-step"
-                                    : ""
+                            ? "completed-step"
+                            : index === currentStep
+                                ? "current-step"
+                                : ""
                             }`}
                     >
 

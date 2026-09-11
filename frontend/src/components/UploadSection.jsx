@@ -40,30 +40,30 @@ const UploadSection = ({
         setMessage("");
 
         try {
-           const formData = new FormData();
-    formData.append("resume", resume);
+            const formData = new FormData();
+            formData.append("resume", resume);
 
-    const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token");
 
-    console.log("JWT Token:", token);
+            console.log("JWT Token:", token);
 
-    const response = await API.post(
-        "/resume/analyze",
-        formData,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    );
+            const response = await API.post(
+                "/resumes/analyze",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
 
-    const data = response.data;
+            const data = response.data;
 
-    console.log("Analyze Response:", data);
+            console.log("Analyze Response:", data);
 
-    setResult(data);
-    setShowResult(true);
+            setResult(data);
+            setShowResult(true);
 
         }
         catch (error) {

@@ -1,13 +1,8 @@
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
-const { GoogleGenAI } = require("@google/genai");
 const Resume = require("../models/Resume");
 const mongoose = require("mongoose");
-
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-});
-
+const { generateAIContent } = require("../services/aiService");
 
 const isValidAnalysis = (analysis) => {
     return (
@@ -19,6 +14,7 @@ const isValidAnalysis = (analysis) => {
         Array.isArray(analysis.improvements)
     );
 };
+
 const analyzeResume = async (req, res) => {
     try {
 
@@ -97,15 +93,12 @@ Resume:
 ${data.text}
 `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
-            contents: prompt,
-        });
+        const responseText = await generateAIContent(prompt);
 
         let analysis;
 
         try {
-            analysis = JSON.parse(response.text);
+            analysis = JSON.parse(responseText);
         } catch (error) {
             return res.status(502).json({
                 message: "The AI returned an invalid response. Please try again.",
@@ -268,9 +261,9 @@ const deleteResume = async (req, res) => {
 };
 
 module.exports = {
+    isValidAnalysis,
     analyzeResume,
     getResumeHistory,
     getResumeById,
-    deleteResume
-
+    deleteResume,
 };

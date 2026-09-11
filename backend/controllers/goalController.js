@@ -1,9 +1,12 @@
 const Goal = require("../models/Goal");
 const Resume = require("../models/Resume");
+const { getGoalSkillGaps: calculateGoalSkillGaps } = require("../services/skillGapService");
+const Task = require("../models/Task");
+const { generateRoadmap } = require("../services/roadmapService");
 
 const createGoal = async (req, res) => {
     try {
-const { title, targetRole, targetSkills } = req.body || {};
+        const { title, targetRole, targetSkills } = req.body || {};
 
         if (!title || !targetRole) {
             return res.status(400).json({
@@ -230,6 +233,113 @@ const deleteGoal = async (req, res) => {
     }
 };
 
+const getGoalRoadmapInput = async (req, res) => {
+    try {
+        const goal = await Goal.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        const latestResume = await Resume.findOne({
+            user: req.user.id,
+        }).sort({
+            createdAt: -1,
+        });
+
+        if (!latestResume) {
+            return res.status(404).json({
+                message: "No resume found. Please analyze a resume first.",
+            });
+        }
+
+        const skillGaps = calculateGoalSkillGaps(
+            goal,
+            latestResume.skills
+        );
+
+        res.status(200).json({
+            goal: {
+                id: goal._id,
+                targetRole: goal.targetRole,
+                targetSkills: goal.targetSkills,
+            },
+            resumeSkills: latestResume.skills,
+            skillGaps,
+        });
+
+    } catch (error) {
+        console.error("Goal Roadmap Input Error:", error);
+
+        res.status(500).json({
+            message: "Something went wrong.",
+        });
+    }
+};
+
+const generateGoalRoadmap = async (req, res) => {
+    try {
+        const goal = await Goal.findOne({
+            _id: req.params.id,
+            user: req.user.id,
+        });
+
+        if (!goal) {
+            return res.status(404).json({
+                message: "Goal not found.",
+            });
+        }
+
+        const latestResume = await Resume.findOne({
+            user: req.user.id,
+        }).sort({
+            createdAt: -1,
+        });
+
+        if (!latestResume) {
+            return res.status(404).json({
+                message: "No resume found. Please analyze a resume first.",
+            });
+        }
+
+        const resumeSkills = latestResume.skills || [];
+
+        const skillGaps = goal.targetSkills.filter(
+            (targetSkill) =>
+                !resumeSkills.some(
+                    (resumeSkill) =>
+                        resumeSkill.toLowerCase() ===
+                        targetSkill.toLowerCase()
+                )
+        );
+
+        const roadmap = await generateRoadmap({
+            targetRole: goal.targetRole,
+            targetSkills: goal.targetSkills,
+            resumeSkills,
+            skillGaps,
+        });
+
+        res.status(200).json({
+            message: "Roadmap generated successfully.",
+            roadmap,
+        });
+
+    } catch (error) {
+        console.error("Generate Goal Roadmap Error:", error);
+
+        res.status(500).json({
+            message: "Failed to generate roadmap.",
+        });
+    }
+};
+
+
 module.exports = {
     createGoal,
     getGoals,
@@ -237,4 +347,6 @@ module.exports = {
     updateGoalProgress,
     updateGoal,
     deleteGoal,
+    getGoalRoadmapInput,
+    generateGoalRoadmap,
 };

@@ -1,9 +1,44 @@
 const mongoose = require("mongoose");
+const Goal = require("../models/Goal");
+const Task = require("../models/Task");
 
 const Resume = require("../models/Resume");
 
 const getDashboard = async (req, res) => {
     try {
+        const resumes = await Resume.find({
+            user: req.user.id,
+        })
+            .sort({ createdAt: -1 })
+            .limit(2);
+
+        const goals = await Goal.find({
+            user: req.user.id,
+        }).sort({
+            createdAt: -1,
+        });
+
+        const totalTasks = await Task.countDocuments({
+            user: req.user.id,
+        });
+
+        const completedTasks = await Task.countDocuments({
+            user: req.user.id,
+            status: "completed",
+        });
+
+        const taskCompletionRate =
+            totalTasks === 0
+                ? 0
+                : Math.round((completedTasks / totalTasks) * 100);
+
+        const activeGoals = goals.filter(
+            (goal) => goal.status === "active"
+        ).length;
+
+        const completedGoals = goals.filter(
+            (goal) => goal.status === "completed"
+        ).length;
 
         const totalResumes = await Resume.countDocuments({
             user: req.user.id,
@@ -36,10 +71,13 @@ const getDashboard = async (req, res) => {
                 createdAt: 1,
             })
             .select("atsScore createdAt -_id");
-            
+
+        const latestATS = resumes[0]?.atsScore || 0;
+        const previousATS = resumes[1]?.atsScore || 0;
+
         const atsImprovement =
-            atsHistory.length > 1
-                ? atsHistory[atsHistory.length - 1].atsScore - atsHistory[0].atsScore
+            resumes.length > 1
+                ? latestATS - previousATS
                 : 0;
 
         const skillGapResult = await Resume.aggregate([
@@ -91,10 +129,23 @@ const getDashboard = async (req, res) => {
             totalResumes,
             highestATS: highestResume.atsScore,
             averageATS: Number(averageATS.toFixed(2)),
-            latestATS: latestResume.atsScore,
+            latestATS,
+            previousATS,
             atsImprovement,
             atsHistory,
             skillGaps: skillGapResult,
+            activeGoals,
+            completedGoals,
+            totalTasks,
+            completedTasks,
+            taskCompletionRate,
+            goals: goals.map((goal) => ({
+                id: goal._id,
+                title: goal.title,
+                targetRole: goal.targetRole,
+                progress: goal.progress,
+                status: goal.status,
+            })),
         });
 
     } catch (error) {

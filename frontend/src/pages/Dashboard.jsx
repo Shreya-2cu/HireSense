@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+
 import UploadSection from "../components/UploadSection";
 import ResultSection from "../components/ResultSection";
 import LoadingAI from "../components/LoadingAI";
 import Navbar from "../components/Navbar";
+
+import DashboardOverview from "../components/dashboard/DashboardOverview";
+import CareerGoals from "../components/dashboard/CareerGoals";
+import LearningProgress from "../components/dashboard/LearningProgress";
+import ATSProgress from "../components/dashboard/ATSProgress";
+import SkillGaps from "../components/dashboard/SkillGaps";
+
 
 function Dashboard() {
 
@@ -16,7 +24,21 @@ function Dashboard() {
         highestATS: 0,
         averageATS: 0,
         latestATS: 0,
+        previousATS: 0,
+        atsImprovement: 0,
+
+        activeGoals: 0,
+        completedGoals: 0,
+
+        totalTasks: 0,
+        completedTasks: 0,
+        taskCompletionRate: 0,
+
+        goals: [],
+        atsHistory: [],
+        skillGaps: [],
     });
+
 
     const fetchDashboard = async () => {
 
@@ -47,129 +69,175 @@ function Dashboard() {
         }
     };
 
+
     useEffect(() => {
         fetchDashboard();
     }, []);
 
+
     return (
         <>
 
-        <Navbar />
+            <Navbar />
 
-        <div className="dashboard-page">
-
-            {/* Header */}
-
-            <div className="dashboard-header">
-
-                <div>
-                    <h1>Dashboard</h1>
-
-                    <p>
-                        Track your resume performance and
-                        improve your career profile.
-                    </p>
-                </div>
-
-            </div>
+            <div className="dashboard-page">
 
 
-            {/* Analytics */}
+                {/* ==================== */}
+                {/* HEADER */}
+                {/* ==================== */}
 
-            <div className="analytics-grid">
+                <div className="dashboard-header">
 
-                <div className="analytics-card">
+                    <div>
 
-                    <span>Total Resumes</span>
+                        <h1>
+                            Dashboard
+                        </h1>
 
-                    <strong>
-                        {dashboardData.totalResumes}
-                    </strong>
+                        <p>
+                            Track your resume performance and
+                            improve your career profile.
+                        </p>
+
+                    </div>
 
                 </div>
 
 
-                <div className="analytics-card">
+                {/* ==================== */}
+                {/* OVERVIEW */}
+                {/* ==================== */}
 
-                    <span>Highest ATS</span>
-
-                    <strong>
-                        {dashboardData.highestATS}
-                    </strong>
-
-                </div>
-
-
-                <div className="analytics-card">
-
-                    <span>Average ATS</span>
-
-                    <strong>
-                        {dashboardData.averageATS}
-                    </strong>
-
-                </div>
-
-
-                <div className="analytics-card">
-
-                    <span>Latest ATS</span>
-
-                    <strong>
-                        {dashboardData.latestATS}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            {/* Resume Upload */}
-
-            <div className="dashboard-section">
-
-                <h2>
-                    Analyze a Resume
-                </h2>
-
-                <p>
-                    Upload your resume and let HireSense
-                    analyze your career profile.
-                </p>
-
-                <UploadSection
-                    setShowResult={setShowResult}
-                    loading={loading}
-                    setLoading={setLoading}
-                    setResult={setResult}
+                <DashboardOverview
+                    dashboardData={dashboardData}
                 />
 
-            </div>
 
+                {/* ==================== */}
+                {/* CAREER PROGRESS */}
+                {/* ==================== */}
 
-            {/* Loading */}
-
-            {loading && (
-                <LoadingAI />
-            )}
-
-
-            {/* Result */}
-
-            {showResult && (
                 <div className="dashboard-section">
 
-                    <ResultSection
-                        result={result}
+                    <h2>
+                        Career Progress
+                    </h2>
+
+
+                    {/* Career Goals */}
+
+                    <CareerGoals
+                        dashboardData={dashboardData}
+                    />
+
+
+                    {/* Learning Progress */}
+
+                    <LearningProgress
+                        dashboardData={dashboardData}
                     />
 
                 </div>
-            )}
 
-        </div>
+
+                {/* ==================== */}
+                {/* RESUME INSIGHTS */}
+                {/* ==================== */}
+
+                <div className="dashboard-section">
+
+                    <h2>
+                        Resume Insights
+                    </h2>
+
+
+                    {/* ATS Progress */}
+
+                    <ATSProgress
+                        dashboardData={dashboardData}
+                    />
+
+
+                    {/* Skill Gaps */}
+
+                    <SkillGaps
+                        dashboardData={dashboardData}
+                    />
+
+                </div>
+
+
+                {/* ==================== */}
+                {/* RESUME ANALYSIS */}
+                {/* ==================== */}
+
+                <div className="dashboard-section">
+
+                    <h2>
+                        Analyze a Resume
+                    </h2>
+
+                    <p>
+                        Upload your resume and let HireSense
+                        analyze your career profile.
+                    </p>
+
+
+                    <UploadSection
+
+                        setShowResult={
+                            setShowResult
+                        }
+
+                        loading={
+                            loading
+                        }
+
+                        setLoading={
+                            setLoading
+                        }
+
+                        setResult={
+                            setResult
+                        }
+
+                    />
+
+                </div>
+
+
+                {/* ==================== */}
+                {/* LOADING */}
+                {/* ==================== */}
+
+                {loading && (
+                    <LoadingAI />
+                )}
+
+
+                {/* ==================== */}
+                {/* RESULT */}
+                {/* ==================== */}
+
+                {showResult && (
+
+                    <div className="dashboard-section">
+
+                        <ResultSection
+                            result={result}
+                        />
+
+                    </div>
+
+                )}
+
+            </div>
+
         </>
 
     );
 }
+
 
 export default Dashboard;

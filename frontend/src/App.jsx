@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import ResumeHistory from "./pages/ResumeHistory";
 import ResumeDetails from "./pages/ResumeDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GoalDetails from "./pages/GoalDetails";
 import "./App.css";
 
 function App() {
@@ -54,6 +55,11 @@ function App() {
                             <ResumeDetails />
                         </ProtectedRoute>
                     }
+                />
+
+                <Route
+                    path="/goals/:id"
+                    element={<GoalDetails />}
                 />
 
             </Routes>

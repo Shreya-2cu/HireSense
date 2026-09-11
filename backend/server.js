@@ -27,7 +27,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/resume", resumeRoutes);
+app.use("/api/resumes", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/goals", goalRoutes);
 app.use("/api/tasks", taskRoutes);
